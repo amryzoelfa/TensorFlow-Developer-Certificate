@@ -24,6 +24,7 @@ def solution_A4():
 
     training_sentences = []
     training_labels = []
+
     testing_sentences = []
     testing_labels = []
 
@@ -49,12 +50,13 @@ def solution_A4():
     oov_tok = "<OOV>"
 
     # Fit your tokenizer with training data
+    # YOUR CODE HERE
     tokenizer = Tokenizer(num_words=vocab_size, oov_token=oov_tok)
     tokenizer.fit_on_texts(training_sentences)
     word_index = tokenizer.word_index
 
-    training_sequences = tokenizer.texts_to_sequences(training_sentences)
-    training_padded = pad_sequences(training_sequences, maxlen=max_length, truncating=trunc_type)
+    sequences = tokenizer.texts_to_sequences(training_sentences)
+    padded = pad_sequences(sequences, maxlen=max_length, truncating=trunc_type)
 
     testing_sequences = tokenizer.texts_to_sequences(testing_sentences)
     testing_padded = pad_sequences(testing_sequences, maxlen=max_length)
@@ -62,12 +64,20 @@ def solution_A4():
     model = tf.keras.Sequential([
         # YOUR CODE HERE. Do not change the last layer.
         tf.keras.layers.Embedding(vocab_size, embedding_dim, input_length=max_length),
-        tf.keras.layers.GlobalAveragePooling1D(),
-        tf.keras.layers.Dense(24, activation='relu'),
+        tf.keras.layers.Dropout(0.5),
+        tf.keras.layers.Flatten(),
+        tf.keras.layers.Dense(6, activation='relu'),
         tf.keras.layers.Dense(1, activation='sigmoid')
     ])
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    model.fit(training_padded, training_labels_final, epochs=10, validation_data=(testing_padded, testing_labels_final), verbose=2)
+
+    model.compile(
+        optimizer='adam',
+        loss='binary_crossentropy',
+        metrics=['accuracy']
+    )
+
+    model.fit(padded, training_labels_final, epochs=2, validation_data=(testing_padded, testing_labels_final))
+
     return model
 
 

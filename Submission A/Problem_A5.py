@@ -72,17 +72,22 @@ def solution_A5():
 
 
     model=tf.keras.models.Sequential([
+        # YOUR CODE HERE.
         tf.keras.layers.Conv1D(filters=64, kernel_size=5, padding='causal', activation='relu', input_shape=[None, 1]),
-        tf.keras.layers.LSTM(64, return_sequences=True),
-        tf.keras.layers.LSTM(64, return_sequences=False),
+        tf.keras.layers.LSTM(128, return_sequences=True),
+        tf.keras.layers.LSTM(128, return_sequences=True),
+        tf.keras.layers.Dense(60, activation='relu'),
         tf.keras.layers.Dense(30, activation='relu'),
-        tf.keras.layers.Dense(10, activation='relu'),
         tf.keras.layers.Dense(1)
     ])
 
     # YOUR CODE
-    model.compile(loss='mse', optimizer=tf.keras.optimizers.Adam(), metrics=['mae'])
-    model.fit(train_set, epochs=20)
+    model.compile(
+        optimizer=tf.keras.optimizers.Adam(learning_rate=1e-4),
+        loss=tf.keras.losses.Huber(),
+        metrics=['mae'])
+
+    model.fit(train_set, epochs=50)
     return model
 
 

@@ -29,24 +29,15 @@ def solution_A1():
                  12.0, 13.0, 14.0, ], dtype=float)
 
     # YOUR CODE HERE
-    X_norm = (X - np.mean(X)) / np.std(X)
-    Y_norm = (Y - np.mean(Y)) / np.std(Y)
-    # Define a simple linear model
-    model = keras.Sequential([
-        keras.layers.Input(shape=(1,)),
-        keras.layers.Dense(units=1)
+    model=keras.Sequential([
+        keras.layers.Dense(units=1, input_shape=[1])
     ])
 
-    # Compile the model
-    model.compile(optimizer=keras.optimizers.SGD(learning_rate=0.01), loss='mean_squared_error')
+    model.compile(optimizer='sgd', loss='mean_squared_error')
 
-    # Train the model
-    model.fit(X_norm, Y_norm, epochs=1500, verbose=0)
+    model.fit(X, Y, epochs=500)
 
-    # Print model predictions for given inputs
-    predictions = model.predict((np.array([-2.0, 10.0]) - np.mean(X)) / np.std(X))
-    predictions = predictions * np.std(Y) + np.mean(Y)
-    print(predictions)
+    print(model.predict([-2.0, 10.0]))
     return model
 
 
